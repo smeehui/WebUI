@@ -229,6 +229,43 @@ const app = {
             new Set([...app.playedSongs, ...playedSongs]),
         );
     },
+    nextSong: () => {
+        app.currentIndex = app.currentIndex + 1;
+        if (app.currentIndex > app.songs.length - 1) {
+            app.currentIndex = 0;
+            app.page = 1;
+            app.pagination(app.page);
+        }
+        if (
+            app.currentIndex != 0 &&
+            app.currentIndex % app.pagedSongs.length === 0
+        ) {
+            app.page += +1;
+            app.pagination(app.page);
+        }
+        app.loadCurrentSong();
+        aud.play();
+        app.renderPlaying();
+        app.render();
+    },
+    prevSong: () => {
+        app.currentIndex = app.currentIndex - 1;
+        if (app.currentIndex < 0) {
+            app.currentIndex = app.songs.length - 1;
+            app.page = Math.floor(app.songs.length / app.pagedSongs.length);
+            app.pagination(app.page);
+        } else if (
+            app.currentIndex % app.pagedSongs.length ==
+            app.pagedSongs.length - 1
+        ) {
+            app.page -= 1;
+            app.pagination(app.page);
+        }
+        app.loadCurrentSong();
+        aud.play();
+        app.renderPlaying();
+        app.render();
+    },
     openEdit: function (index) {
         const song = app.songs[index];
         const title = $("#title");
@@ -258,8 +295,6 @@ const app = {
         aud.onloadedmetadata = function () {
             dur = aud.duration;
         };
-        // On scroll
-        playList.onscroll = (e) => {};
 
         // View
         view.onclick = function () {
@@ -268,7 +303,6 @@ const app = {
             grid.classList.toggle("hidden", !app.isGrid);
             app.render();
         };
-
         // Click - play
         playBtn.onclick = function () {
             if (app.isPlaying) aud.pause();
@@ -276,35 +310,10 @@ const app = {
         };
         // On click next-prev
         nextBtn.onclick = function () {
-            app.currentIndex = app.currentIndex + 1;
-            if (app.currentIndex > app.songs.length - 1) {
-                app.currentIndex = 0;
-                app.page = 1;
-                app.pagination(app.page);
-            }
-            if (
-                app.currentIndex != 0 &&
-                app.currentIndex % app.pagedSongs.length === 0
-            ) {
-                app.page += +1;
-                app.pagination(app.page);
-            }
-            app.loadCurrentSong();
-            aud.play();
-            app.renderPlaying();
-            app.render();
+            app.nextSong();
         };
         prevBtn.onclick = function () {
-            app.currentIndex = app.currentIndex - 1;
-            if (app.currentIndex < 0) {
-                app.currentIndex = app.songs.length - 1;
-                app.page = Math.floor(app.songs.length / 4);
-                app.pagination(app.page);
-            }
-            app.loadCurrentSong();
-            aud.play();
-            app.renderPlaying();
-            app.render();
+            app.prevSong();
         };
         // On-play-pause
 
@@ -416,6 +425,11 @@ const app = {
             }
         };
         $(".close-modal").onclick = () => app.hideModal();
+
+        // on next itself
+        aud.onended = () => {
+            app.nextSong();
+        };
     },
     updateSong: (song) => {
         const id = song.id;
