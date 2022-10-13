@@ -18,74 +18,12 @@ const curr = $(".curr");
 const rem = $(".rem");
 const volume = $(".volume-slider");
 const playList = $(".playlist");
+const modal = $(".modal");
+const modalForm = $(".modal-form");
+const formImage = $(".form-image");
 
 const app = {
         db: [{
-            id: 1,
-            title: "All Of My Days",
-            album: "Crash Landing On You (OST)",
-            artist: "SeJeon",
-            gerne: "Pop",
-            path: "/Mp3Player/asset/mp3/song1.mp3",
-            img: "/Mp3Player/asset/img/songs/song1.jpg",
-        }, {
-            id: 2,
-            title: "Chúng Ta Sau Này",
-            album: "Chúng Ta Sau Này (Single)",
-            artist: "T.R.I",
-            gerne: "V-Pop",
-            path: "/Mp3Player/asset/mp3/song2.mp3",
-            img: "/Mp3Player/asset/img/songs/song2.m4a",
-        }, {
-            id: 3,
-            title: "Dù Chẳng Phải Anh",
-            album: "Dù Chẳng Phải Anh (Single)",
-            artist: "Đinh Mạnh Ninh",
-            gerne: "Ballad",
-            path: "/Mp3Player/asset/mp3/song3.mp3",
-            img: "/Mp3Player/asset/img/songs/song3.jpg",
-        }, {
-            id: 4,
-            title: "Giữ Lấy Làm Gì",
-            album: "Giữ Lấy Làm Gì (Single)",
-            artist: "MONSTAR",
-            gerne: "R&B",
-            path: "/Mp3Player/asset/mp3/song4.mp3",
-            img: "/Mp3Player/asset/img/songs/song4.jpg",
-        }, {
-            id: 5,
-            title: "Nếu",
-            album: "Nếu (Single)",
-            artist: "Reddy",
-            gerne: "Lofi",
-            path: "/Mp3Player/asset/mp3/song5.mp3",
-            img: "/Mp3Player/asset/img/songs/song5.m4a",
-        }, {
-            id: 6,
-            title: "No One Else",
-            album: "More Than Blue (OST)",
-            artist: "Lee Seung Chul",
-            gerne: "Ballad",
-            path: "/Mp3Player/asset/mp3/song6.mp3",
-            img: "/Mp3Player/asset/img/songs/song6.jpg",
-        }, {
-            id: 7,
-            title: "Răng Khôn",
-            album: "Răng Khôn (Single)",
-            artist: "Phí Phương Anh feat RIN",
-            gerne: "V-Pop",
-            path: "/Mp3Player/asset/mp3/song7.mp3",
-            img: "/Mp3Player/asset/img/songs/song7.jpg",
-        }, {
-            id: 8,
-            title: "Sunset",
-            album: "Crash Landing On You (OST)",
-            artist: "DAVICHI",
-            gerne: "Ballad",
-            path: "/Mp3Player/asset/mp3/song8.mp3",
-            img: "/Mp3Player/asset/img/songs/song8.jpg",
-        }, ],
-        songs: [{
             id: 0,
             title: "All Of My Days",
             album: "Crash Landing On You (OST)",
@@ -150,6 +88,7 @@ const app = {
             path: "/Mp3Player/asset/mp3/song8.mp3",
             img: "/Mp3Player/asset/img/songs/song8.jpg",
         }, ],
+        songs: [],
         pagedSongs: [],
         playedSongs: [],
         currentIndex: 0,
@@ -191,18 +130,18 @@ const app = {
     renderGrid: function () {
         const htmls = app.songs.map((song, index) => {
             return `
-                <div class="song-card ${
-                    app.currentIndex === index ? "white" : "light"
-                }" data-index="${index}">
+                <div class="song-card" data-index="${index}">
                     <div class="song-img" style="background-image: url(${
                         song.img
                     });background-size: 147px 147px">
                     </div>
-                    <div class="float-play">${
-                        app.currentIndex === index
-                            ? `<i class="fa-solid fa-circle-play ctl-icn ">`
-                            : `<i class="fa-solid fa-circle-play ctl-icn">`
-                    }</i></div>
+                    <div class="float-play ${
+                        app.currentIndex === index ? "white" : "light"
+                    }">${
+                app.currentIndex === index
+                    ? `<i class="fa-solid fa-circle-play ctl-icn ">`
+                    : `<i class="fa-solid fa-circle-play ctl-icn">`
+            }</i></div>
                     <div class="song-detl">
                         <div class="song-title">
                             ${song.title}
@@ -266,6 +205,9 @@ const app = {
             },
         });
     },
+    dublicateSong: () => {
+        app.songs = app.db;
+    },
     calcTime: function (currTime, duration) {
         const min = Math.floor(currTime / 60);
         const sec = Math.floor(currTime % 60);
@@ -293,6 +235,8 @@ const app = {
         const artist = $("#artist");
         const album = $("#album");
         const image = $(".form-image");
+        const submit = $(".form-submit");
+        submit.dataset.id = index;
         title.value = song.title;
         artist.value = song.artist;
         album.value = song.album;
@@ -313,17 +257,13 @@ const app = {
         let dur; //duration of songs
         aud.onloadedmetadata = function () {
             dur = aud.duration;
-            console.log(dur);
         };
         // On scroll
-        playList.onscroll = (e) => {
-            console.log(e.target.offsetTop);
-        };
+        playList.onscroll = (e) => {};
 
-        // Click
+        // View
         view.onclick = function () {
             app.isGrid = app.isGrid ? false : true;
-            console.log(app.isGrid);
             list.classList.toggle("hidden", app.isGrid);
             grid.classList.toggle("hidden", !app.isGrid);
             app.render();
@@ -334,11 +274,20 @@ const app = {
             if (app.isPlaying) aud.pause();
             else aud.play();
         };
-        // On next-prev
+        // On click next-prev
         nextBtn.onclick = function () {
             app.currentIndex = app.currentIndex + 1;
             if (app.currentIndex > app.songs.length - 1) {
                 app.currentIndex = 0;
+                app.page = 1;
+                app.pagination(app.page);
+            }
+            if (
+                app.currentIndex != 0 &&
+                app.currentIndex % app.pagedSongs.length === 0
+            ) {
+                app.page += +1;
+                app.pagination(app.page);
             }
             app.loadCurrentSong();
             aud.play();
@@ -349,6 +298,8 @@ const app = {
             app.currentIndex = app.currentIndex - 1;
             if (app.currentIndex < 0) {
                 app.currentIndex = app.songs.length - 1;
+                app.page = Math.floor(app.songs.length / 4);
+                app.pagination(app.page);
             }
             app.loadCurrentSong();
             aud.play();
@@ -381,7 +332,6 @@ const app = {
         // Volume change
         volume.oninput = () => {
             aud.volume = volume.value;
-            console.log(aud.volume);
         };
 
         // Seeking
@@ -392,14 +342,27 @@ const app = {
         // Play onclick
         // list
         playList.onclick = (e) => {
-            const parent = e.target.parentElement;
-            if (parent.dataset.index) {
+            const element = e.target;
+            const parent = element.parentElement;
+            if (
+                element.classList.contains("edit") ||
+                element.classList.contains("edit-icn")
+            ) {
+                const value = Number(
+                    element.closest(".edit").parentElement.dataset.index,
+                );
+                app.openEdit(value);
+                modal.classList.remove("hidden");
+                modalForm.style.top = "50%";
+                formImage.style.animation =
+                    "spin 3s cubic-bezier(0.075, 0.82, 0.165, 1) 0.5s";
+            } else if (parent.dataset.index) {
                 app.currentIndex = Number(parent.dataset.index);
                 app.loadCurrentSong();
                 app.renderPlaying();
                 aud.play();
                 app.render();
-            } else if (e.target.classList.contains("fa-greater-than")) {
+            } else if (element.classList.contains("fa-greater-than")) {
                 app.page += 1;
                 if (app.page > Math.floor(app.songs.length / 4)) {
                     app.page = 1;
@@ -407,20 +370,13 @@ const app = {
                 $(".page-num").value = app.page;
                 app.pagination(app.page);
                 app.render();
-            } else if (e.target.classList.contains("fa-less-than")) {
+            } else if (element.classList.contains("fa-less-than")) {
                 app.page -= 1;
                 if (app.page < 1) {
                     app.page = Math.floor(app.songs.length / 4);
                 }
-                $(".page-num").value = app.page;
                 app.pagination(app.page);
                 app.render();
-            } else if (e.target.closest(".edit")) {
-                const value = Number(
-                    e.target.closest(".edit").parentElement.dataset.index,
-                );
-                app.openEdit(value);
-                $(".modal").classList.remove("hidden");
             }
         };
         // grid
@@ -445,22 +401,50 @@ const app = {
                 ? `<i class="fa-regular fa-circle-play"></i>`
                 : `<i class="fa-regular fa-circle-pause"></i>`;
         };
+        // modal
+        modalForm.onclick = (e) => {
+            e.preventDefault();
+            if (e.target.classList.contains("form-submit")) {
+                const id = e.target.dataset.id;
+                const title = $("#title").value;
+                const artist = $("#artist").value;
+                const album = $("#album").value;
+                app.updateSong({ id, title, artist, album });
+                app.hideModal();
+            } else if (e.target.classList.contains("form-cancel")) {
+                app.hideModal();
+            }
+        };
+        $(".close-modal").onclick = () => app.hideModal();
     },
-
+    updateSong: (song) => {
+        const id = song.id;
+        app.songs[id].title = song.title;
+        app.songs[id].artist = song.artist;
+        app.songs[id].album = song.album;
+        app.render();
+    },
+    hideModal: function () {
+        formImage.style.animation = "none";
+        modalForm.style.top = "-22%";
+        modal.classList.add("hidden");
+    },
     loadCurrentSong: function () {
         aud.src = app.currentSong.path;
     },
-    pagination: function (page) {
-        console.log(page);
-        let perPage = 4;
+    pagination: function (page, perPage = 4) {
         app.pagedSongs = app.songs.slice(
             (page - 1) * perPage,
             (page - 1) * perPage + perPage,
         );
+
+        $(".page-num").value = page;
     },
     start: function () {
         // Tao thuoc tinh cho thanh phan
         app.defineProperties();
+        // Lay data
+        app.dublicateSong();
         // phan trang
         app.pagination(app.page);
 

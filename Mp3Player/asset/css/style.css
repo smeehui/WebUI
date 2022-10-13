@@ -332,7 +332,7 @@
     width: 100%;
     border-radius: 10px;
     height: 320px;
-    overflow: auto;
+    overflow: hidden;
     scroll-snap-type: x mandatory;
     scroll-padding: 24px;
 }
@@ -618,10 +618,11 @@ table td {
     background-color: #fff;
     width: 490px;
     height: 300px;
-    position: relative;
-    top: 50%;
+    position: fixed;
+    top: -22%;
     left: 50%;
     transform: translate(-50%, -50%);
+    transition: all 0.5s;
 }
 
 form {
@@ -649,12 +650,11 @@ form .right {
 .left .form-image {
     width: 250px;
     height: 250px;
-    background-image: url(/Mp3Player/asset/img/avt.jpg);
+    background-color: #f89ee2;
     border-radius: 50%;
     position: absolute;
     right: 15px;
     box-shadow: 0 0 10px 10px #ffffff;
-    animation: spin 3s cubic-bezier(0.075, 0.82, 0.165, 1);
 }
 
 .r-container {

@@ -216,50 +216,44 @@
         </div>
     </div>
     <audio class="audio" preload="metadata" src=""></audio>
-    <div class="modal hidden">
-        <div class="modal-form">
-            <div class="close-modal">
-                <i class="fa-regular fa-circle-xmark"></i>
-            </div>
-            <form action="" class="form">
-                <div class="left">
-                    <div class="form-image"></div>
-                </div>
-                <div class="right">
-                    <div class="r-container bl-cen">
-                        <div class="input-item bl-cen">
-                            <label for="title" class="heading">TITLE</label>
+    <div class="modal hidden"></div>
 
-                            <input type="text" class="edit-input" id="title" />
-                        </div>
-                        <div class="input-item bl-cen">
-                            <label for="artist" class="heading">ARTIST</label
-                                >
-                                <input
-                                    type="text"
-                                    class="edit-input"
-                                    id="artist"
-                                />
-                            </div>
-                            <div class="input-item bl-cen">
-                                <label for="album" class="heading">ALBUM</label>
-                            <input type="text" class="edit-input" id="album" />
-                        </div>
-                        <div class="input-item bl-cen" style="
-                                    display: flex;
-                                    flex-direction: row;
-                                    justify-content: space-between;
-                                ">
-                            <button class="edit-input form-submit">
-                                    Save</button
-                                ><button class="edit-input form-submit">
-                                    Cancel
-                                </button>
-                        </div>
+    <div class="modal-form">
+        <div class="close-modal">
+            <i class="fa-regular fa-circle-xmark"></i>
+        </div>
+        <form action="" class="form">
+            <div class="left">
+                <div class="form-image"></div>
+            </div>
+            <div class="right">
+                <div class="r-container bl-cen">
+                    <div class="input-item bl-cen">
+                        <label for="title" class="heading">TITLE</label>
+
+                        <input type="text" class="edit-input" id="title" />
+                    </div>
+                    <div class="input-item bl-cen">
+                        <label for="artist" class="heading">ARTIST</label>
+                        <input type="text" class="edit-input" id="artist" />
+                    </div>
+                    <div class="input-item bl-cen">
+                        <label for="album" class="heading">ALBUM</label>
+                        <input type="text" class="edit-input" id="album" />
+                    </div>
+                    <div class="input-item bl-cen" style="
+                                display: flex;
+                                flex-direction: row;
+                                justify-content: space-between;
+                            ">
+                        <button class="edit-input form-submit">Save</button
+                            ><button class="edit-input form-cancel">
+                                Cancel
+                            </button>
                     </div>
                 </div>
-            </form>
-        </div>
+            </div>
+        </form>
     </div>
 </body>
 <script src="/Mp3Player/app.js"></script>
