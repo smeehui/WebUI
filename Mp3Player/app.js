@@ -104,6 +104,7 @@ const app = {
         searchSongs: "",
         pagedSongs: [],
         playedSongs: [],
+        pagedSearchSongs: [],
         currentIndex: 0,
         elementsPerPage: 4,
         isGrid: false,
@@ -116,7 +117,6 @@ const app = {
         isShortView: true,
         renderList: function(songs) {
                 if (songs) {
-                    console.log(1);
                     const htmls = songs.map((song) => {
                                 return `
                     <tr data-index = "${song.id}" 
@@ -501,7 +501,8 @@ const app = {
             $(".page-num").value = app.page;
             app.pagination();
             if (app.searchSongs) {
-                app.render(app.searchSongs);
+                app.pagination(app.searchSongs);
+                app.render(app.pagedSearchSongs);
             } else {
                 app.render();
             }
@@ -513,7 +514,8 @@ const app = {
             }
             app.pagination();
             if (app.searchSongs) {
-                app.render(app.searchSongs);
+                app.pagination(app.searchSongs);
+                app.render(app.pagedSearchSongs);
             } else {
                 app.render();
             }
@@ -649,7 +651,7 @@ const app = {
                 });
                 app.searchSongs = Array.from(new Set(checkSongs));
                 app.pagination(app.searchSongs);
-                app.render(app.searchSongs);
+                app.render(app.pagedSearchSongs);
             } else {
                 app.searchSongs = "";
                 app.pagination();
@@ -731,7 +733,7 @@ const app = {
     pagination: function (songs) {
         if (songs) {
             app.addId();
-            app.searchSongs = songs.slice(
+            app.pagedSearchSongs = songs.slice(
                 (app.page - 1) * app.elementsPerPage,
                 (app.page - 1) * app.elementsPerPage + app.elementsPerPage,
             );

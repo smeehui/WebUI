@@ -338,7 +338,7 @@
 }
 
 .playing-artist {
-    font-size: 3rem;
+    font-size: 2.5rem;
     font-weight: 900;
 }
 
@@ -746,4 +746,22 @@ form .right {
 .form-del {
     width: 30%;
     cursor: pointer;
+}
+
+.form-mid {
+    justify-content: space-between;
+    align-items: center;
+}
+
+.input-item>input:hover,
+.btn:hover {
+    background-color: rgba(248, 152, 168, 0.904);
+}
+
+.fa-solid {
+    color: #3b6b9e;
+}
+
+.fa-solid:hover {
+    color: #2862a1;
 }
