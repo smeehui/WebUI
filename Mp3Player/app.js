@@ -185,18 +185,18 @@ const app = {
     renderGrid: function () {
         const htmls = app.songs.map((song, index) => {
             return `
-                <div class="song-card" data-index="${index}">
+                <div class="song-card ${
+                    app.currentIndex === index ? "current" : ""
+                }" data-index="${index}">
                     <div class="song-img" style="background-image: url(${
                         song.img
                     });background-size: 147px 147px">
                     </div>
-                    <div class="float-play ${
-                        app.currentIndex === index ? "light" : "white"
-                    }">${
-                app.currentIndex === index
-                    ? `<i class="fa-solid fa-circle-play ">`
-                    : `<i class="fa-solid fa-circle-play ">`
-            }</i></div>
+                    <div class="float-play">${
+                        app.currentIndex === index
+                            ? `<i class="fa-solid fa-circle-play ">`
+                            : `<i class="fa-solid fa-circle-play ">`
+                    }</i></div>
                     <div class="song-detl">
                         <div class="song-title">
                             ${song.title}
@@ -214,10 +214,11 @@ const app = {
             app.currentSong.img
         }); transition : all .3s linear; ${
             app.isShortView ? "height: 220px" : "height:110px"
-        }">\
+        }">
             <div class="playing-img-con" style="background-image: url(${
                 app.currentSong.img
             });background-size: 200px 200px">
+            <div class="cd-inside"></div>
             </div>
             <div class="playing-det bl-cen">
                 <div class="playing-detl bl-cen">
@@ -342,9 +343,6 @@ const app = {
     },
     openEdit: function (index) {
         const song = app.songs[index];
-        const title = $("#form-title");
-        const artist = $("#form-artist");
-        const album = $("#form-album");
         const image = $(".form-image");
         const submit = $(".form-submit");
         const del = $(".form-del");
@@ -353,6 +351,7 @@ const app = {
         formTitle.value = song.title;
         formArtist.value = song.artist;
         formAlbum.value = song.album;
+        formGenre.value = song.gerne;
         image.style.backgroundImage = `url(${song.img})`;
         image.style.backgroundSize = "100% 100%";
         setTimeout(() => {
@@ -583,7 +582,8 @@ const app = {
                 const title = formTitle.value;
                 const artist = formArtist.value;
                 const album = formAlbum.value;
-                app.updateSong({ id, title, artist, album });
+                const genre = formGenre.value;
+                app.updateSong({ id, title, artist, album, genre });
                 app.hideModal();
             } else if (elClass.contains("form-cancel")) {
                 app.hideModal();
@@ -664,7 +664,14 @@ const app = {
         app.songs[id].title = song.title;
         app.songs[id].artist = song.artist;
         app.songs[id].album = song.album;
-        app.render();
+        app.songs[id].genre = song.genre;
+        if (app.searchSongs) {
+            app.pagination(app.searchSongs);
+            app.render(app.pagedSearchSongs);
+        } else {
+            app.pagination;
+            app.render();
+        }
     },
     hideModal: function () {
         formImage.style.animation = "none";

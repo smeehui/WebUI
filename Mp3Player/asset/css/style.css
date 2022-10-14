@@ -313,10 +313,25 @@
 }
 
 .playing-img-con {
+    position: relative;
     min-width: 200px;
     min-height: 200px;
     border-radius: 50%;
     box-shadow: 0 0 5px 5px rgb(206, 206, 206);
+}
+
+.cd-inside {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: #fff;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background-color: transparent;
+    border: 10px solid #f1f1f1;
+    box-shadow: 0 0 5px 5px whitesmoke;
 }
 
 .playing-det {
@@ -475,6 +490,8 @@ table td {
     width: 100%;
     overflow-x: scroll;
     scroll-snap-type: x unset;
+    background-color: #60adf5;
+    border-radius: 10px;
     gap: 10px;
 }
 
@@ -488,6 +505,10 @@ table td {
     width: 157px;
     border-radius: 10px;
     scroll-snap-align: center;
+}
+
+.current {
+    box-shadow: 0 0 10px 10px snow;
 }
 
 .float-play {
