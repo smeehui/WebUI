@@ -730,9 +730,8 @@ const app = {
     },
     pagination: function (songs) {
         if (songs) {
-            console.log(songs);
             app.addId();
-            app.pagedSongs = songs.slice(
+            app.searchSongs = songs.slice(
                 (app.page - 1) * app.elementsPerPage,
                 (app.page - 1) * app.elementsPerPage + app.elementsPerPage,
             );
