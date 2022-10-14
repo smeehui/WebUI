@@ -305,7 +305,7 @@ const app = {
         );
     },
     nextSong: () => {
-        app.currentIndex = app.currentIndex + 1;
+        app.currentIndex++;
         if (app.currentIndex > app.songs.length - 1) {
             app.currentIndex = 0;
             app.page = 1;
@@ -324,10 +324,10 @@ const app = {
         app.render();
     },
     prevSong: () => {
-        app.currentIndex = app.currentIndex - 1;
+        app.currentIndex--;
         if (app.currentIndex < 0) {
             app.currentIndex = app.songs.length - 1;
-            app.page = Math.floor(app.songs.length / app.pagedSongs.length);
+            app.page = Math.ceil(app.songs.length / app.elementsPerPage);
             app.pagination();
         } else if (
             app.currentIndex % app.pagedSongs.length ==
@@ -336,10 +336,10 @@ const app = {
             app.page -= 1;
             app.pagination();
         }
+        app.render();
         app.loadCurrentSong();
         aud.play();
         app.renderPlaying();
-        app.render();
     },
     openEdit: function (index) {
         const song = app.songs[index];
@@ -367,6 +367,8 @@ const app = {
             app.pagination();
             app.render();
             app.renderPlayedList();
+        } else {
+            app.hideModal();
         }
     },
     suffle: () => {
