@@ -124,9 +124,11 @@ const app = {
             localStorage.setItem(H_PLAYER_KEY, JSON.stringify(app.config));
         },
         loadConfig: () => {
-            app.isSuffle = app.config.isSuffle;
-            app.isRepeated = app.config.isRepeated;
-            aud.volume = app.config.volume;
+            app.isSuffle = app.config.isSuffle || false;
+            app.isRepeated = app.config.isRepeated || false;
+            aud.volume = app.config.volume || 0.2;
+            app.currentIndex = app.config.currentIndex || 0;
+            app.page = app.config.page || 1;
             suffleBtn.classList.toggle("active", app.isSuffle);
             repeatBtn.classList.toggle("active", app.isRepeated);
         },
@@ -304,6 +306,7 @@ const app = {
         // Loaded
         window.onload = () => {
             progress.value = 1;
+            volume.value = app.config.volume || 0.2;
         };
 
         // Load-meta
@@ -314,6 +317,8 @@ const app = {
         // On-play-pause
 
         aud.onplay = function () {
+            app.setConfig("currentIndex", app.currentIndex);
+            app.setConfig("page", app.page);
             app.addPlayed(app.currentIndex);
             const thumb = $(".playing-img-con");
             app.isPlaying = true;
@@ -700,7 +705,6 @@ const app = {
         app.currentIndex = newIndex;
         let newPage = Math.ceil((app.currentIndex + 1) / app.pagedSongs.length);
         if (app.page != newPage) {
-            console.log(newPage);
             app.page = newPage;
             app.pagination();
         }
