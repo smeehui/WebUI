@@ -103,7 +103,7 @@
 }
 
 .active {
-    color: #eb5151;
+    color: #eb5151 !important;
 }
 
 
@@ -397,6 +397,16 @@
     top: 20px;
     font-size: large;
     cursor: pointer;
+    color: #e60000;
+}
+
+.add {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    font-size: large;
+    cursor: pointer;
+    color: #e60000;
 }
 
 .view {
@@ -803,10 +813,6 @@ form .right {
 .edit-input:hover,
 .btn:hover {
     background-color: rgba(248, 152, 168, 0.904);
-}
-
-.fa-solid {
-    color: #3b6b9e;
 }
 
 .fa-solid:hover {

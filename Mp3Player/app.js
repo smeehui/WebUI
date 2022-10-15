@@ -1,6 +1,9 @@
 const $ = document.querySelector.bind(document);
 const $$ = document.querySelectorAll.bind(document);
-// render
+// Local storage
+const H_PLAYER_KEY = "H_PLAYER";
+
+// Element rendering
 const listTbl = $(".list-body");
 const grid = $(".grid");
 const list = $(".list");
@@ -102,6 +105,7 @@ const app = {
             img: "/Mp3Player/asset/img/songs/song8.jpg",
         }, ],
         songs: [],
+        config: JSON.parse(localStorage.getItem(H_PLAYER_KEY)) || {},
         searchSongs: "",
         pagedSongs: [],
         playedSongs: [],
@@ -114,8 +118,27 @@ const app = {
         page: 1,
         isSuffle: false,
         isRepeated: false,
-        isShowFull: false,
         isShortView: true,
+        setConfig: (key, value) => {
+            app.config[key] = value;
+            localStorage.setItem(H_PLAYER_KEY, JSON.stringify(app.config));
+        },
+        loadConfig: () => {
+            app.isSuffle = app.config.isSuffle;
+            app.isRepeated = app.config.isRepeated;
+            aud.volume = app.config.volume;
+            suffleBtn.classList.toggle("active", app.isSuffle);
+            repeatBtn.classList.toggle("active", app.isRepeated);
+        },
+        render: function(songs) {
+            if (app.isGrid) {
+                $(".page-nav").classList.add("hidden");
+                app.renderGrid();
+            } else {
+                $(".page-nav").classList.remove("hidden");
+                app.renderList(songs);
+            }
+        },
         renderList: function(songs) {
                 if (songs) {
                     const htmls = songs.map((song) => {
@@ -210,6 +233,7 @@ const app = {
         grid.innerHTML = htmls.join("");
     },
     renderPlaying: function () {
+        console.log(1);
         const htmls = `
         <div class="player-container" style="background-image: url(${
             app.currentSong.img
@@ -259,147 +283,27 @@ const app = {
         });
         rectPlayed.innerHTML = htmls.join("");
     },
-    render: function (songs) {
-        if (app.isGrid) {
-            $(".page-nav").classList.add("hidden");
-            app.renderGrid();
+    pagination: function (songs) {
+        if (songs) {
+            app.addId();
+            app.pagedSearchSongs = songs.slice(
+                (app.page - 1) * app.elementsPerPage,
+                (app.page - 1) * app.elementsPerPage + app.elementsPerPage,
+            );
+            $(".page-num").value = app.page;
         } else {
-            $(".page-nav").classList.remove("hidden");
-            app.renderList(songs);
+            app.addId();
+            app.pagedSongs = app.songs.slice(
+                (app.page - 1) * app.elementsPerPage,
+                (app.page - 1) * app.elementsPerPage + app.elementsPerPage,
+            );
+            $(".page-num").value = app.page;
         }
-    },
-    defineProperties: function () {
-        Object.defineProperty(app, "currentSong", {
-            get: function () {
-                return app.songs[app.currentIndex];
-            },
-        });
-    },
-    dublicateSong: () => {
-        app.songs = app.db;
-    },
-    addId: () => {
-        app.songs.map((song, index) => {
-            song.id = index;
-            return song;
-        });
-    },
-    calcTime: function (currTime, duration) {
-        const min = Math.floor(currTime / 60);
-        const sec = Math.floor(currTime % 60);
-        const reMin = Math.floor((duration - currTime) / 60);
-        const reSec = Math.floor((duration - currTime) % 60);
-        const mm = min < 9 ? `0${min}` : min;
-        const ss = sec < 9 ? `0${sec}` : sec;
-        const reMm = reMin < 9 ? `0${reMin}` : reMin;
-        const reSs = reSec < 9 ? `0${reSec}` : reSec;
-
-        curr.innerText = `${mm}:${ss}`;
-        if (duration) {
-            rem.innerText = `${reMm}:${reSs}`;
-        }
-    },
-    addPlayed: (index) => {
-        const playedSongs = app.songs.filter((song) => song.id === index);
-        app.playedSongs = Array.from(
-            new Set([...playedSongs, ...app.playedSongs]),
-        );
-    },
-    nextSong: () => {
-        app.currentIndex++;
-        if (app.currentIndex > app.songs.length - 1) {
-            app.currentIndex = 0;
-            app.page = 1;
-            app.pagination();
-        }
-        if (
-            app.currentIndex != 0 &&
-            app.currentIndex % app.pagedSongs.length === 0
-        ) {
-            app.page += +1;
-            app.pagination();
-        }
-        app.loadCurrentSong();
-        aud.play();
-        app.renderPlaying();
-        app.render();
-    },
-    prevSong: () => {
-        app.currentIndex--;
-        if (app.currentIndex < 0) {
-            app.currentIndex = app.songs.length - 1;
-            app.page = Math.ceil(app.songs.length / app.elementsPerPage);
-            app.pagination();
-        } else if (
-            app.currentIndex % app.pagedSongs.length ==
-            app.pagedSongs.length - 1
-        ) {
-            app.page -= 1;
-            app.pagination();
-        }
-        app.render();
-        app.loadCurrentSong();
-        aud.play();
-        app.renderPlaying();
-    },
-    openEdit: function (index) {
-        try {
-            const song = app.songs[index];
-            const image = $(".form-image");
-            const submit = $(".form-submit");
-            const del = $(".form-del");
-            submit.dataset.id = index;
-            del.dataset.id = index;
-            formTitle.value = song.title;
-            formArtist.value = song.artist;
-            formAlbum.value = song.album;
-            formGenre.value = song.gerne;
-            mp3.dataset.url = song.path;
-            image.style.backgroundImage = `url(${song.img})`;
-            image.style.backgroundSize = "100% 100%";
-            setTimeout(() => {
-                formTitle.focus();
-            }, 700);
-        } catch (error) {}
-    },
-    deletSong: function (id) {
-        const check = confirm("Do you really want to delete this song?");
-        if (check) {
-            app.songs.splice(id, 1);
-            app.playedSongs.splice(id, 1);
-            app.hideModal();
-            app.pagination();
-            app.render();
-            app.renderPlayedList();
-        } else {
-            app.hideModal();
-        }
-    },
-    suffle: () => {
-        if (app.isSuffle) {
-            for (let i = 0; i < app.songs.length; i++) {
-                let j = Math.floor(Math.random() * (i + 1));
-                var temp = app.songs[i];
-                app.songs[i] = app.songs[j];
-                app.songs[j] = temp;
-            }
-            app.pagination();
-            app.render();
-        } else {
-            app.isAsc = false;
-            app.sort("TITLE");
-            app.pagination();
-            app.render();
-        }
-    },
-    repeat: () => {
-        aud.loop = app.isRepeated ? true : false;
     },
     handleEvents: function () {
         // Loaded
         window.onload = () => {
             progress.value = 1;
-            volume.value = 0.2;
         };
 
         // Load-meta
@@ -433,6 +337,7 @@ const app = {
         // Volume changezd
         volume.oninput = () => {
             aud.volume = volume.value;
+            app.setConfig("volume", volume.value);
         };
 
         // Seeking
@@ -441,7 +346,11 @@ const app = {
         };
         // on next itself
         aud.onended = () => {
-            app.nextSong();
+            if (app.isSuffle) {
+                app.playSuffle();
+            } else {
+                app.nextSong();
+            }
         };
         // ===========CLICK=================
         // Click - play
@@ -451,10 +360,16 @@ const app = {
         };
         // On click next-prev
         nextBtn.onclick = function () {
-            app.nextSong();
+            if (app.isSuffle) {
+                app.playSuffle();
+            } else app.nextSong();
         };
         prevBtn.onclick = function () {
-            app.prevSong();
+            if (app.isSuffle) {
+                app.playSuffle();
+            } else {
+                app.prevSong();
+            }
         };
         // Play onclick
         // list
@@ -487,7 +402,7 @@ const app = {
         };
         // View
         view.onclick = function () {
-            app.isGrid = app.isGrid ? false : true;
+            app.isGrid = !app.isGrid;
             if (app.isGrid) {
                 view.classList.replace("fa-grip", "fa-list");
             } else {
@@ -564,14 +479,16 @@ const app = {
 
         // Suffle repeat
         suffleBtn.onclick = () => {
-            app.isSuffle = app.isSuffle ? false : true;
+            app.isSuffle = !app.isSuffle;
             suffleBtn.classList.toggle("active", app.isSuffle);
-            app.suffle();
+            app.setConfig("isSuffle", app.isSuffle);
         };
         repeatBtn.onclick = () => {
             app.isRepeated = app.isRepeated ? false : true;
+            suffleBtn.classList.toggle("active", app.isSuffle);
             repeatBtn.classList.toggle("active", app.isRepeated);
             app.repeat();
+            app.setConfig("isRepeated", app.isRepeated);
         };
 
         // Volumes
@@ -699,6 +616,135 @@ const app = {
             }
         };
     },
+    defineProperties: function () {
+        Object.defineProperty(app, "currentSong", {
+            get: function () {
+                return app.songs[app.currentIndex];
+            },
+        });
+    },
+    dublicateSong: () => {
+        app.songs = app.db;
+    },
+    addId: () => {
+        app.songs.map((song, index) => {
+            song.id = index;
+            return song;
+        });
+    },
+    calcTime: function (currTime, duration) {
+        const min = Math.floor(currTime / 60);
+        const sec = Math.floor(currTime % 60);
+        const reMin = Math.floor((duration - currTime) / 60);
+        const reSec = Math.floor((duration - currTime) % 60);
+        const mm = min < 9 ? `0${min}` : min;
+        const ss = sec < 9 ? `0${sec}` : sec;
+        const reMm = reMin < 9 ? `0${reMin}` : reMin;
+        const reSs = reSec < 9 ? `0${reSec}` : reSec;
+
+        curr.innerText = `${mm}:${ss}`;
+        if (duration) {
+            rem.innerText = `${reMm}:${reSs}`;
+        }
+    },
+    addPlayed: (index) => {
+        const playedSongs = app.songs.filter((song) => song.id === index);
+        app.playedSongs = Array.from(
+            new Set([...playedSongs, ...app.playedSongs]),
+        );
+    },
+    nextSong: () => {
+        app.currentIndex++;
+        console.log(app.currentIndex > app.songs.length - 1);
+        if (app.currentIndex > app.songs.length - 1) {
+            app.currentIndex = 0;
+            app.page = 1;
+            app.pagination();
+        } else if (
+            app.currentIndex != 0 &&
+            app.currentIndex % app.pagedSongs.length === 0
+        ) {
+            app.page += 1;
+            app.pagination();
+        }
+        console.log(5);
+        app.renderPlaying();
+        app.render();
+        app.loadCurrentSong();
+        aud.play();
+    },
+    prevSong: () => {
+        app.currentIndex--;
+        if (app.currentIndex < 0) {
+            app.currentIndex = app.songs.length - 1;
+            app.page = Math.ceil(app.songs.length / app.elementsPerPage);
+            app.pagination();
+        } else if (
+            app.currentIndex % app.pagedSongs.length ==
+            app.pagedSongs.length - 1
+        ) {
+            app.page -= 1;
+            app.pagination();
+        }
+        app.render();
+        app.loadCurrentSong();
+        aud.play();
+        app.renderPlaying();
+    },
+
+    playSuffle: () => {
+        let newIndex;
+        do {
+            newIndex = Math.floor(Math.random() * app.songs.length);
+        } while (newIndex === app.currentIndex);
+        app.currentIndex = newIndex;
+        let newPage = Math.ceil((app.currentIndex + 1) / app.pagedSongs.length);
+        if (app.page != newPage) {
+            console.log(newPage);
+            app.page = newPage;
+            app.pagination();
+        }
+        app.renderPlaying();
+        app.loadCurrentSong();
+        aud.play();
+        app.render();
+    },
+    openEdit: function (index) {
+        try {
+            const song = app.songs[index];
+            const image = $(".form-image");
+            const submit = $(".form-submit");
+            const del = $(".form-del");
+            submit.dataset.id = index;
+            del.dataset.id = index;
+            formTitle.value = song.title;
+            formArtist.value = song.artist;
+            formAlbum.value = song.album;
+            formGenre.value = song.gerne;
+            mp3.dataset.url = song.path;
+            image.style.backgroundImage = `url(${song.img})`;
+            image.style.backgroundSize = "100% 100%";
+            setTimeout(() => {
+                formTitle.focus();
+            }, 700);
+        } catch (error) {}
+    },
+    deletSong: function (id) {
+        const check = confirm("Do you really want to delete this song?");
+        if (check) {
+            app.songs.splice(id, 1);
+            app.playedSongs.splice(id, 1);
+            app.hideModal();
+            app.pagination();
+            app.render();
+            app.renderPlayedList();
+        } else {
+            app.hideModal();
+        }
+    },
+    repeat: () => {
+        aud.loop = app.isRepeated ? true : false;
+    },
     openModal: () => {
         modal.classList.remove("hidden");
         modalForm.style.top = "50%";
@@ -794,7 +840,6 @@ const app = {
                 app.render();
                 break;
             case "ALBUM":
-                console.log(1);
                 if (app.isAsc) {
                     app.isAsc = false;
                     app.songs.sort((a, b) => b.album.localeCompare(a.album));
@@ -823,28 +868,13 @@ const app = {
             timeout = setTimeout(executeFunction, wait);
         };
     },
-    pagination: function (songs) {
-        if (songs) {
-            app.addId();
-            app.pagedSearchSongs = songs.slice(
-                (app.page - 1) * app.elementsPerPage,
-                (app.page - 1) * app.elementsPerPage + app.elementsPerPage,
-            );
-            $(".page-num").value = app.page;
-        } else {
-            app.addId();
-            app.pagedSongs = app.songs.slice(
-                (app.page - 1) * app.elementsPerPage,
-                (app.page - 1) * app.elementsPerPage + app.elementsPerPage,
-            );
-            $(".page-num").value = app.page;
-        }
-    },
     start: function () {
         // Tao thuoc tinh cho thanh phan
         app.defineProperties();
         // Lay data
         app.dublicateSong();
+        // Tai config
+        app.loadConfig();
         // phan trang
         app.pagination();
 
