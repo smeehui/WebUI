@@ -29,6 +29,7 @@ const sortTitle = $("#title");
 const sortArtit = $("#artist");
 const sortAlbum = $("#ablum");
 const searchInp = $(".search-input");
+const imgSubmit = $(".img-submit");
 
 const modal = $(".modal");
 const modalForm = $(".modal-form");
@@ -132,7 +133,7 @@ const app = {
                                     : song.id + 1
                             }</i>
                         </td>
-                        <td class="bl-cen">
+                        <td>
                             <img class="pointer" src="${
                                 song.img
                             }" style="height: 100%; display:block;object-fit:fill"/>
@@ -164,7 +165,7 @@ const app = {
                                     : song.id + 1
                             }</i>
                         </td>
-                        <td class="bl-cen">
+                        <td>
                             <img class="pointer" src="${
                                 song.img
                             }" style="height: 100%; display:block;object-fit:fill"/>
@@ -342,21 +343,24 @@ const app = {
         app.renderPlaying();
     },
     openEdit: function (index) {
-        const song = app.songs[index];
-        const image = $(".form-image");
-        const submit = $(".form-submit");
-        const del = $(".form-del");
-        submit.dataset.id = index;
-        del.dataset.id = index;
-        formTitle.value = song.title;
-        formArtist.value = song.artist;
-        formAlbum.value = song.album;
-        formGenre.value = song.gerne;
-        image.style.backgroundImage = `url(${song.img})`;
-        image.style.backgroundSize = "100% 100%";
-        setTimeout(() => {
-            formTitle.focus();
-        }, 700);
+        try {
+            const song = app.songs[index];
+            const image = $(".form-image");
+            const submit = $(".form-submit");
+            const del = $(".form-del");
+            submit.dataset.id = index;
+            del.dataset.id = index;
+            formTitle.value = song.title;
+            formArtist.value = song.artist;
+            formAlbum.value = song.album;
+            formGenre.value = song.gerne;
+            mp3.dataset.url = song.path;
+            image.style.backgroundImage = `url(${song.img})`;
+            image.style.backgroundSize = "100% 100%";
+            setTimeout(() => {
+                formTitle.focus();
+            }, 700);
+        } catch (error) {}
     },
     deletSong: function (id) {
         const check = confirm("Do you really want to delete this song?");
@@ -457,6 +461,7 @@ const app = {
         list.onclick = (e) => {
             const element = e.target;
             const parent = element.parentElement;
+            // Opend edit form
             if (
                 element.classList.contains("edit") ||
                 element.classList.contains("edit-icn")
@@ -464,11 +469,14 @@ const app = {
                 const value = Number(
                     element.closest(".edit").parentElement.dataset.index,
                 );
-                app.openEdit(value);
-                modal.classList.remove("hidden");
-                modalForm.style.top = "50%";
+                delBtn.classList.toggle("hidden");
+                imgSubmit.classList.add("hidden");
                 formImage.style.animation =
                     "spin 3s cubic-bezier(0.075, 0.82, 0.165, 1) 0.5s";
+
+                app.openModal();
+                app.openEdit(value);
+                //Play on click
             } else if (parent.dataset.index) {
                 app.currentIndex = Number(parent.dataset.index);
                 app.loadCurrentSong();
@@ -577,24 +585,47 @@ const app = {
         };
         // modal
         modalForm.onclick = (e) => {
-            e.preventDefault();
             const elClass = e.target.classList;
             if (elClass.contains("form-submit")) {
-                const id = e.target.dataset.id;
+                e.preventDefault();
+                const id =
+                    e.target.dataset.id === "undefined"
+                        ? app.songs.length + 1
+                        : e.target.dataset.id;
                 const title = formTitle.value;
                 const artist = formArtist.value;
                 const album = formAlbum.value;
                 const genre = formGenre.value;
-                app.updateSong({ id, title, artist, album, genre });
+                const img = textInp.value.trim()
+                    ? `"${textInp.value}"`
+                    : formImage.style.backgroundImage.match(/".*"/g)[0];
+                const newImg = img.slice(1, img.length - 1);
+                const path = mp3.dataset.url ? mp3.dataset.url : " ";
+                app.updateSong({
+                    id,
+                    title,
+                    artist,
+                    album,
+                    genre,
+                    newImg,
+                    path,
+                });
                 app.hideModal();
             } else if (elClass.contains("form-cancel")) {
                 app.hideModal();
             } else if (elClass.contains("form-del")) {
                 app.deletSong(e.target.dataset.id);
+            } else if (elClass.contains("form-image")) {
+                $(".img-submit").classList.toggle("hidden");
             }
         };
-        $(".close-modal").onclick = () => app.hideModal();
-        // Recently layed
+        $(".close-modal").onclick = () => {
+            delBtn.classList.add("hidden");
+            $(".form").reset();
+            imgSubmit.classList.toggle("hidden");
+            app.hideModal();
+        };
+        // Recently played
         rectPlayed.onclick = (e) => {
             const songId = Number(e.target.closest(".rect-song").dataset.id);
             console.log(songId);
@@ -605,7 +636,10 @@ const app = {
             aud.play();
             app.render();
         };
-
+        add.onclick = () => {
+            app.openModal();
+            app.openEdit();
+        };
         // ===========INPUT===============
         searchInp.oninput = app.debounce((e) => {
             app.search(e.target.value);
@@ -636,13 +670,45 @@ const app = {
                 app.render();
             }
         };
+        // Insert thumbnail
+        // On hit enter at image input
+        textInp.onkeyup = (e) => {
+            e.preventDefault();
+            if (e.key === "Enter" || e.keyCode === 13) {
+                var url = textInp.value;
+                $(".form-image").style.backgroundImage = `url(${url})`;
+                $(".form-image").style.backgroundSize = "100% 100%";
+            }
+        };
+        // On upload image
+        fileInp.oninput = (e) => {
+            let files = e.target.files;
+            if (files[files.length - 1]) {
+                let tmppath = URL.createObjectURL(files[files.length - 1]);
+                $(".form-image").style.backgroundImage = `url(${tmppath})`;
+                $(".form-image").style.backgroundSize = "100% 100%";
+            }
+        };
+        // On upload audio
+        mp3.oninput = (e) => {
+            let files = e.target.files;
+            console.log(files);
+            if (files[files.length - 1]) {
+                let tmppath = URL.createObjectURL(files[files.length - 1]);
+                mp3.dataset.url = tmppath;
+            }
+        };
+    },
+    openModal: () => {
+        modal.classList.remove("hidden");
+        modalForm.style.top = "50%";
     },
     search: (inp) => {
         try {
             if (inp.trim()) {
                 let regex = new RegExp(`${inp}+`, "i");
                 let checkSongs = [];
-                app.songs.forEach((song, index) => {
+                app.songs.forEach((song) => {
                     for (var [key, value] of Object.entries(song)) {
                         if (String(value).search(regex) !== -1) {
                             if (!value.match(/Mp3Player/g)) {
@@ -663,15 +729,33 @@ const app = {
     },
     updateSong: (song) => {
         const id = song.id;
-        app.songs[id].title = song.title;
-        app.songs[id].artist = song.artist;
-        app.songs[id].album = song.album;
-        app.songs[id].genre = song.genre;
+        if (id <= app.songs.length) {
+            console.log();
+            app.songs[id].img = song.newImg;
+            app.songs[id].title = song.title;
+            app.songs[id].artist = song.artist;
+            app.songs[id].album = song.album;
+            app.songs[id].genre = song.genre;
+            app.songs[id].path = song.path;
+        }
+        // Add new song
+        else {
+            const newSong = {
+                id: id,
+                title: song.title,
+                artist: song.artist,
+                album: song.album,
+                gerne: song.genre,
+                img: song.newImg,
+                path: song.path,
+            };
+            app.songs.push(newSong);
+        }
         if (app.searchSongs) {
             app.pagination(app.searchSongs);
             app.render(app.pagedSearchSongs);
         } else {
-            app.pagination;
+            app.pagination();
             app.render();
         }
     },

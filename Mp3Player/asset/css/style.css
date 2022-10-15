@@ -320,7 +320,7 @@
     box-shadow: 0 0 5px 5px rgb(206, 206, 206);
 }
 
-.cd-inside {
+<i class="fa-solid fa-arrow-up"></i> {
     position: absolute;
     top: 50%;
     left: 50%;
@@ -393,9 +393,8 @@
 
 .view-range {
     position: absolute;
-    width: 44px;
-    right: 44px;
-    top: 19px;
+    right: 75px;
+    top: 20px;
     font-size: large;
     cursor: pointer;
 }
@@ -442,6 +441,7 @@ table tr {
     text-align: left;
     border-collapse: collapse;
     margin-left: 5px;
+    justify-content: center;
 }
 
 .playlist tr>td:first-child,
@@ -728,6 +728,17 @@ form .right {
     box-shadow: 0 0 10px 10px #ffffff;
 }
 
+.img-submit {
+    width: 80%;
+    flex-direction: column;
+    background-color: rgba(255, 255, 255, 0.514);
+    border-radius: 10px;
+}
+
+#textInp:focus {
+    width: 100%;
+}
+
 .r-container {
     flex-direction: column;
     width: 100%;
@@ -742,12 +753,23 @@ form .right {
     margin-top: 10px;
 }
 
-.input-item .heading {
+.heading {
     text-shadow: 2px 2px rgb(255, 255, 255);
     align-self: start;
     font-size: 1.4rem;
     font-weight: 900;
     width: 100%;
+}
+
+.upload {
+    align-self: center;
+    text-align: center;
+    line-height: 35px;
+    width: 110px;
+    height: 35px;
+    border: 3px solid #ff3ce5;
+    border-radius: 10px;
+    font-size: 1.5rem;
 }
 
 .edit-input {
@@ -762,6 +784,10 @@ form .right {
     width: 100%;
 }
 
+.r-container>div+div {
+    margin-top: 10px;
+}
+
 .form-submit,
 .form-cancel,
 .form-del {
@@ -774,7 +800,7 @@ form .right {
     align-items: center;
 }
 
-.input-item>input:hover,
+.edit-input:hover,
 .btn:hover {
     background-color: rgba(248, 152, 168, 0.904);
 }

@@ -79,6 +79,15 @@
                         <p class="section tsection">
                             Songs
                             <span>
+                                    <div
+                                        id="add"
+                                        class="add view hov-z"
+                                        style="right: 48px"
+                                    >
+                                        <i class="fa-solid fa-plus"></i>
+                                    </div>
+                                </span>
+                            <span>
                                     <label
                                         for="viewRange"
                                         class="view-range hov-z"
@@ -191,9 +200,43 @@
         <div class="close-modal">
             <i class="fa-regular fa-circle-xmark"></i>
         </div>
-        <form action="" class="form">
+        <form action="" class="form" onkeydown="return event.key != 'Enter'">
             <div class="left">
-                <div class="form-image"></div>
+                <label class="form-image bl-cen hov-z" id="formImage" for="fileInp">
+                        <div class="bl-cen img-submit">
+                            <label
+                                for="textInp"
+                                class="heading"
+                                style="width: auto; align-self: center"
+                            >
+                                THUMBNAIL:</label
+                            >
+                            <span>Enter Link:</span>
+                            <input
+                                id="textInp"
+                                class="edit-input"
+                                style="width: 60%"
+                                type="text"
+                                src=""
+                                alt=""
+                            />
+                            <span style="align-self: center; width: auto"
+                                >or:</span
+                            >
+                            <label
+                                for="fileInp"
+                                class="heading upload pointer hov-z"
+                                >Upload</label
+                            >
+                            <input
+                                id="fileInp"
+                                class="hidden"
+                                type="file"
+                                accept="image/*"
+                            />
+                        </div>
+                        <div class="cd-inside"></div>
+                    </label>
             </div>
             <div class="right">
                 <div class="r-container bl-cen">
@@ -226,29 +269,57 @@
                                 />
                             </div>
                         </div>
-                        <div class="input-item bl-cen">
-                            <label for="album" class="heading">ALBUM</label>
+                        <div class="bl-cen form-mid">
+                            <div class="input-item" style="width: 60%">
+                                <label for="album" class="heading">ALBUM</label>
                             <input type="text" class="edit-input" id="formAlbum" />
                         </div>
-                        <div class="input-item bl-cen" style="
+                        <div class="input-item" style="width: 39%; display: flex; margin-top: 0">
+                            <label for="mp3" class="heading">MP3</label>
+                            <label for="mp3" id="formMp3" class="edit-input btn pointer" style="
+                                        text-align: center;
+                                        line-height: 35px;
+                                        color: rgb(87, 87, 87);
+                                        height: 35px;
+                                    ">
+                                    Up load</label
+                                >
+                                <input
+                                    type="file"
+                                    id="mp3"
+                                    hidden
+                                    class="edit-input"
+                                    accept="audio/*"
+                                />
+                            </div>
+                        </div>
+                        <div
+                            class="input-item bl-cen"
+                            style="
                                 display: flex;
                                 flex-direction: row;
                                 justify-content: space-between;
-                            ">
+                            "
+                        >
                             <button class="edit-input form-submit btn">
                                 Save</button
-                            ><button class="edit-input form-cancel btn">
+                            ><button
+                                class="edit-input form-cancel btn"
+                                type="reset"
+                            >
                                 Cancel
                             </button>
-                            <button class="edit-input form-del btn">
+                            <button
+                                id="delBtn"
+                                class="edit-input form-del btn hidden"
+                            >
                                 Delete
                             </button>
                         </div>
                     </div>
                 </div>
-        </form>
+            </form>
         </div>
-</body>
-<script src="/Mp3Player/app.js"></script>
-
+    </body>
+    <script src="/Mp3Player/app.js"></script>
 </html>
