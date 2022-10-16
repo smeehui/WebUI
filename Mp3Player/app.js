@@ -158,7 +158,7 @@ const app = {
                                     : song.id + 1
                             }</i>
                         </td>
-                        <td>
+                        <td >
                             <img class="pointer" src="${
                                 song.img
                             }" style="height: 100%; display:block;object-fit:fill"/>
@@ -193,7 +193,7 @@ const app = {
                         <td>
                             <img class="pointer" src="${
                                 song.img
-                            }" style="height: 100%; display:block;object-fit:fill"/>
+                            }" style="height: 32px; display:block;object-fit:fill"/>
                         </td>
                         <td class="prim pointer">${song.title}</td>
                         <td>${song.artist}</td>
@@ -605,8 +605,8 @@ const app = {
         // On upload image
         fileInp.oninput = (e) => {
             let files = e.target.files;
-            if (files[files.length - 1]) {
-                let tmppath = URL.createObjectURL(files[files.length - 1]);
+            if (files[0]) {
+                let tmppath = URL.createObjectURL(files[0]);
                 $(".form-image").style.backgroundImage = `url(${tmppath})`;
                 $(".form-image").style.backgroundSize = "100% 100%";
             }
@@ -615,8 +615,8 @@ const app = {
         mp3.oninput = (e) => {
             let files = e.target.files;
             console.log(files);
-            if (files[files.length - 1]) {
-                let tmppath = URL.createObjectURL(files[files.length - 1]);
+            if (files[0]) {
+                let tmppath = URL.createObjectURL(files[0]);
                 mp3.dataset.url = tmppath;
             }
         };
