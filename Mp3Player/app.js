@@ -39,7 +39,8 @@ const modalForm = $(".modal-form");
 const formImage = $(".form-image");
 
 const app = {
-        db: [{
+    db: [
+        {
             id: 0,
             title: "All Of My Days",
             album: "Crash Landing On You (OST)",
@@ -47,7 +48,8 @@ const app = {
             gerne: "Pop",
             path: "/Mp3Player/asset/mp3/song1.mp3",
             img: "/Mp3Player/asset/img/songs/song1.jpg",
-        }, {
+        },
+        {
             id: 1,
             title: "Chúng Ta Sau Này",
             album: "Chúng Ta Sau Này (Single)",
@@ -55,7 +57,8 @@ const app = {
             gerne: "V-Pop",
             path: "/Mp3Player/asset/mp3/song2.mp3",
             img: "/Mp3Player/asset/img/songs/song2.jpg",
-        }, {
+        },
+        {
             id: 2,
             title: "Dù Chẳng Phải Anh",
             album: "Dù Chẳng Phải Anh (Single)",
@@ -63,7 +66,8 @@ const app = {
             gerne: "Ballad",
             path: "/Mp3Player/asset/mp3/song3.mp3",
             img: "/Mp3Player/asset/img/songs/song3.jpg",
-        }, {
+        },
+        {
             id: 3,
             title: "Giữ Lấy Làm Gì",
             album: "Giữ Lấy Làm Gì (Single)",
@@ -71,7 +75,8 @@ const app = {
             gerne: "R&B",
             path: "/Mp3Player/asset/mp3/song4.mp3",
             img: "/Mp3Player/asset/img/songs/song4.jpg",
-        }, {
+        },
+        {
             id: 4,
             title: "Nếu",
             album: "Nếu (Single)",
@@ -79,7 +84,8 @@ const app = {
             gerne: "Lofi",
             path: "/Mp3Player/asset/mp3/song5.m4a",
             img: "/Mp3Player/asset/img/songs/song5.jpg",
-        }, {
+        },
+        {
             id: 5,
             title: "No One Else",
             album: "More Than Blue (OST)",
@@ -87,7 +93,8 @@ const app = {
             gerne: "Ballad",
             path: "/Mp3Player/asset/mp3/song6.mp3",
             img: "/Mp3Player/asset/img/songs/song6.jpg",
-        }, {
+        },
+        {
             id: 6,
             title: "Răng Khôn",
             album: "Răng Khôn (Single)",
@@ -95,7 +102,8 @@ const app = {
             gerne: "V-Pop",
             path: "/Mp3Player/asset/mp3/song7.mp3",
             img: "/Mp3Player/asset/img/songs/song7.jpg",
-        }, {
+        },
+        {
             id: 7,
             title: "Sunset",
             album: "Crash Landing On You (OST)",
@@ -103,48 +111,49 @@ const app = {
             gerne: "Ballad",
             path: "/Mp3Player/asset/mp3/song8.mp3",
             img: "/Mp3Player/asset/img/songs/song8.jpg",
-        }, ],
-        songs: [],
-        config: JSON.parse(localStorage.getItem(H_PLAYER_KEY)) || {},
-        searchSongs: "",
-        pagedSongs: [],
-        playedSongs: [],
-        pagedSearchSongs: [],
-        currentIndex: 0,
-        elementsPerPage: 4,
-        isGrid: false,
-        isPlaying: false,
-        isAsc: true,
-        page: 1,
-        isSuffle: false,
-        isRepeated: false,
-        isShortView: true,
-        setConfig: (key, value) => {
-            app.config[key] = value;
-            localStorage.setItem(H_PLAYER_KEY, JSON.stringify(app.config));
         },
-        loadConfig: () => {
-            app.isSuffle = app.config.isSuffle || false;
-            app.isRepeated = app.config.isRepeated || false;
-            aud.volume = app.config.volume || 0.2;
-            app.currentIndex = app.config.currentIndex || 0;
-            app.page = app.config.page || 1;
-            suffleBtn.classList.toggle("active", app.isSuffle);
-            repeatBtn.classList.toggle("active", app.isRepeated);
-        },
-        render: function(songs) {
-            if (app.isGrid) {
-                $(".page-nav").classList.add("hidden");
-                app.renderGrid();
-            } else {
-                $(".page-nav").classList.remove("hidden");
-                app.renderList(songs);
-            }
-        },
-        renderList: function(songs) {
-                if (songs) {
-                    const htmls = songs.map((song) => {
-                                return `
+    ],
+    songs: [],
+    config: JSON.parse(localStorage.getItem(H_PLAYER_KEY)) || {},
+    searchSongs: "",
+    pagedSongs: [],
+    playedSongs: [],
+    pagedSearchSongs: [],
+    currentIndex: 0,
+    elementsPerPage: 4,
+    isGrid: false,
+    isPlaying: false,
+    isAsc: true,
+    page: 1,
+    isSuffle: false,
+    isRepeated: false,
+    isShortView: true,
+    setConfig: (key, value) => {
+        app.config[key] = value;
+        localStorage.setItem(H_PLAYER_KEY, JSON.stringify(app.config));
+    },
+    loadConfig: () => {
+        app.isSuffle = app.config.isSuffle || false;
+        app.isRepeated = app.config.isRepeated || false;
+        aud.volume = app.config.volume || 0.2;
+        app.currentIndex = app.config.currentIndex || 0;
+        app.page = app.config.page || 1;
+        suffleBtn.classList.toggle("active", app.isSuffle);
+        repeatBtn.classList.toggle("active", app.isRepeated);
+    },
+    render: function (songs) {
+        if (app.isGrid) {
+            $(".page-nav").classList.add("hidden");
+            app.renderGrid();
+        } else {
+            $(".page-nav").classList.remove("hidden");
+            app.renderList(songs);
+        }
+    },
+    renderList: function (songs) {
+        if (songs) {
+            const htmls = songs.map((song) => {
+                return `
                     <tr data-index = "${song.id}" 
                         class="song ${
                             app.currentIndex === song.id ? "playing" : null
@@ -492,7 +501,7 @@ const app = {
             app.isRepeated = app.isRepeated ? false : true;
             suffleBtn.classList.toggle("active", app.isSuffle);
             repeatBtn.classList.toggle("active", app.isRepeated);
-            app.repeat();
+            ud.loop = app.isRepeated ? true : false;
             app.setConfig("isRepeated", app.isRepeated);
         };
 
@@ -745,9 +754,6 @@ const app = {
         } else {
             app.hideModal();
         }
-    },
-    repeat: () => {
-        aud.loop = app.isRepeated ? true : false;
     },
     openModal: () => {
         modal.classList.remove("hidden");
