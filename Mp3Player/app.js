@@ -895,7 +895,6 @@ const main = () => {
             return function sumVal() {
                 let context = this,
                     args = arguments;
-                console.log(context);
                 let executeFunction = function () {
                     func.apply(context, args);
                 };
