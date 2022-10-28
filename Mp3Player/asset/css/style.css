@@ -302,7 +302,8 @@
     padding: 10px;
     flex-direction: row;
     justify-content: space-around;
-    background: rgb(235, 235, 235);
+    /* background: rgb(235, 235, 235); */
+    background-size: cover;
 }
 
 .playing-img-con {
@@ -312,7 +313,7 @@
     border-radius: 50%;
     box-shadow: 0 0 5px 5px rgb(206, 206, 206);
 }
-
+/* 
 <i class="fa-solid fa-arrow-up" > </i > {
     position: absolute;
     top: 50%;
@@ -325,7 +326,7 @@
     background-color: transparent;
     border: 10px solid #f1f1f1;
     box-shadow: 0 0 5px 5px whitesmoke;
-}
+} */
 
 .playing-det {
     background-color: #b3b3b379;
@@ -429,6 +430,7 @@ thead {
 
 .song:hover {
     background-color: #e8ecf4;
+    cursor: pointer;
 }
 
 /* List */
@@ -450,6 +452,7 @@ table tr {
 .playlist td > img {
     width: 65%;
     border-radius: 10px;
+    height: 90%;
 }
 
 table td {

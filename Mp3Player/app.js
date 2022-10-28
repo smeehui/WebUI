@@ -30,6 +30,7 @@ const downVol = $(".down-vol");
 const sortID = $("#ID");
 const sortTitle = $("#title");
 const sortArtit = $("#artist");
+const sortGenre = $("#genre");
 const sortAlbum = $("#ablum");
 const searchInp = $(".search-input");
 const imgSubmit = $(".img-submit");
@@ -171,7 +172,7 @@ const app = {
                                 <td >
                                     <img class="pointer" src="${
                                         song.img
-                                    }" style="height: 100%; display:block;object-fit:fill"/>
+                                    }" style="display:block;object-fit:fill"/>
                                 </td>
                                 <td class="prim pointer">${song.title}</td>
                                 <td>${song.artist}</td>
@@ -205,7 +206,7 @@ const app = {
                                 <td>
                                     <img class="pointer" src="${
                                         song.img
-                                    }" style="height: 32px; display:block;object-fit:fill"/>
+                                    }" style=" display:block;object-fit:fill"/>
                                 </td>
                                 <td class="prim pointer">${song.title}</td>
                                 <td>${song.artist}</td>
@@ -468,6 +469,9 @@ const app = {
             app.sort(e.target.innerText);
         };
         sortTitle.onclick = (e) => {
+            app.sort(e.target.innerText);
+        };
+        sortGenre.onclick = (e) => {
             app.sort(e.target.innerText);
         };
         sortAlbum.onclick = (e) => {
@@ -820,6 +824,7 @@ const app = {
         modal.classList.add("hidden");
     },
     sort: (type) => {
+        console.log(type);
         switch (type) {
             case "#":
                 app.songs.sort((a, b) => b.id - a.id);
@@ -858,6 +863,18 @@ const app = {
                 }
                 app.pagination();
                 app.render();
+                break;
+            case "GENRE":
+                if (app.isAsc) {
+                    app.isAsc = false;
+                    app.songs.sort((a, b) => b.gerne.localeCompare(a.gerne));
+                } else {
+                    app.isAsc = true;
+                    app.songs.sort((a, b) => a.gerne.localeCompare(b.gerne));
+                }
+                app.pagination();
+                app.render();
+                break;
             default:
                 break;
         }
