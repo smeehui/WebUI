@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Mp3 list</title>
+        <style>
+            #mp3-table {
+                border-collapse: collapse;
+            }
+            #mp3-table tr td {
+                width: fit-content;
+                height: 25px;
+            }
+            #mp3-table thead tr {
+                text-align: center;
+                background-color: rgb(54, 54, 54);
+                color: whitesmoke;
+            }
+            #mp3-table tbody tr:nth-child(odd) {
+                background-color: rgb(184, 184, 184);
+            }
+            #mp3-table thead td + td {
+                border-left: 1px solid #333;
+            }
+            #mp3-table thead td {
+                padding: 4px 10px;
+            }
+            #mp3-table td:nth-child(2) {
+                width: 150px;
+            }
+        </style>
+    </head>
+    <body>
+        <table id="mp3-table">
+            <caption>
+                List MP3
+            </caption>
+            <thead>
+                <tr>
+                    <td>ID</td>
+                    <td>TITLE</td>
+                    <td>ARTIST</td>
+                    <td>ALBUM</td>
+                    <td>GENRE</td>
+                </tr>
+            </thead>
+            <tbody id="mp3List">
+                <tr>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+            </tbody>
+        </table>
+        <form action="db.json" method="POST" id="form">
+            <table>
+                <tbody>
+                    <tr>
+                        <td><label for="id">ID</label></td>
+                        <td><input type="number" name="id" id="id" /></td>
+                    </tr>
+                    <tr>
+                        <td><label for="title">TITLE</label></td>
+                        <td><input type="text" name="title" id="title" /></td>
+                    </tr>
+                    <tr>
+                        <td><label for="artist">ARTIST</label></td>
+                        <td><input type="text" name="artist" id="artist" /></td>
+                    </tr>
+                    <tr>
+                        <td><label for="album">ALBUM</label></td>
+                        <td><input type="text" name="album" id="album" /></td>
+                    </tr>
+                    <tr>
+                        <td><label for="genre">GENRE</label></td>
+                        <td><input type="text" name="genre" id="genre" /></td>
+                    </tr>
+                    <tr>
+                        <td><label for="path">PATH</label></td>
+                        <td><input type="text" name="path" id="path" /></td>
+                    </tr>
+                    <tr>
+                        <td><label for="img">IMAGE</label></td>
+                        <td><input type="text" name="img" id="img" /></td>
+                    </tr>
+                    <tr>
+                        <td colspan="2">
+                            <button
+                                id="addBtn"
+                                type="submit"
+                                style="width: 100%"
+                            >
+                                ADD
+                            </button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </form>
+    </body>
+    <script>
+        //    "id": 0,
+        //   "title": "All Of My Days",
+        //   "album": "Crash Landing On You (OST)",
+        //   "artist": "SeJeon",
+        //   "gerne": "Pop",
+        //   "path": "/Mp3Player/asset/mp3/song1.mp3",
+        //   "img": "/Mp3Player/asset/img/songs/song1.jpg"
+        class Song {
+            constructor(id, title, album, artist, genre, path, img) {
+                this.id = id;
+                this.title = title;
+                this.album = album;
+                this.artist = artist;
+                this.genre = genre;
+                this.path = path;
+                this.ing = img;
+            }
+        }
+        function fetchData() {
+            let songs = [];
+            let xhttp = new XMLHttpRequest();
+            xhttp.onreadystatechange = function () {
+                //Call a function when the state changes.
+                if (xhttp.readyState == 4 && xhttp.status == 200) {
+                    songs = JSON.parse(xhttp.responseText);
+                }
+            };
+            xhttp.open("GET", "db.json", false);
+            xhttp.send();
+            return songs;
+        }
+        async function renderListSong() {
+            let songs = await fetchData();
+            const htmls = songs.map((song, i) => {
+                return `
+                        <tr>
+                           <td>${song.id}</td>
+                           <td>${song.title}</td>
+                           <td>${song.artist}</td>
+                           <td>${song.album}</td>
+                           <td>${song.genre}</td>
+                        </tr>
+                  `;
+            });
+            mp3List.innerHTML = htmls.join("");
+        }
+        renderListSong();
+        //   addBtn.onclick = (e) => {
+        //       e.preventDefault();
+        //       console.log(e);
+        //       let newId = id.value;
+        //       let newTitle = title.value;
+        //       let newArtist = artist.value;
+        //       let newAlbum = album.value;
+        //       let newGenre = genre.value;
+        //       let newPath = path.value;
+        //       let newImg = img.value;
+        //       let newSong = new Song(
+        //           newId,
+        //           newTitle,
+        //           newAlbum,
+        //           newArtist,
+        //           newGenre,
+        //           newPath,
+        //           newImg,
+        //       );
+        //       sendData(newSong);
+        //   };
+        form.onsubmit = (e) => {
+            e.preventDefault();
+            var data = new FormData(document.getElementById("form"));
+            sendData(Object.fromEntries(data));
+        };
+        const sendData = (data) => {
+            let xhttp = new XMLHttpRequest();
+            let url = "index.html";
+            xhttp.open("POST", url, true);
+
+            //Send the proper header information along with the request
+            xhttp.setRequestHeader(
+                "Content-type",
+                "application/x-www-form-urlencoded",
+            );
+            xhttp.onreadystatechange = function () {
+                //Call a function when the state changes.
+                if (xhttp.readyState == 4 && xhttp.status == 200) {
+                    console.log(xhttp);
+                }
+            };
+            xhttp.send(JSON.stringify(data));
+            console.log(xhttp.headers);
+        };
+    </script>
+</html>

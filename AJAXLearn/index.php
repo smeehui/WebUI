@@ -9,6 +9,9 @@
     <body>
         <h1 id="text"></h1>
         <button id="btn">Change</button>
+        <?php
+        echo "I love you"
+        ?>
         <script>
             btn.onclick = function () {
                 const xhttp = new XMLHttpRequest();
